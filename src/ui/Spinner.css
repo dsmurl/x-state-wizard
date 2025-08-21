@@ -1,0 +1,25 @@
+.spinner-container {
+  animation: container-spin 1.5s linear infinite;
+}
+
+.spinner-dot {
+  top: 0;
+  left: calc(50% - 0.5rem);
+}
+
+.gray-dot {
+  transform: translateY(2rem);
+}
+
+.blue-dot {
+  transform: translateY(0.5rem);
+}
+
+@keyframes container-spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
