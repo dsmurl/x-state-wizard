@@ -1,4 +1,4 @@
-import { FC } from "react";
+import { FC, useCallback } from "react";
 
 import { ClassSelect } from "@/components/CreateCharWizard/components/ClassSelect/ClassSelect";
 import { ItemSelect } from "@/components/CreateCharWizard/components/ItemSelect/ItemSelect";
@@ -8,79 +8,80 @@ import { CharacterCreation } from "@/components/CreateCharWizard/components/Char
 import { CharacterCreationSuccess } from "@/components/CreateCharWizard/components/CharacterCreationSuccess/CharacterCreationSuccess";
 import { CharacterCreationFail } from "@/components/CreateCharWizard/components/CharacterCreationFail/CharacterCreationFail";
 
-import { characterCreationContext } from "@/machines/characterCreationMachine/characterCreationMachine";
+import {
+  Character,
+  characterCreationContext,
+} from "@/machines/characterCreationMachine/characterCreationMachine";
 import { useCharacterCreationMachine } from "@/machines/characterCreationMachine/useCharacterCreationMachine";
 
 type CreateCharWizardProps = {
   setIsOpen: (open: boolean) => void;
 };
 
-const CreateCharWizardRenderer: FC<CreateCharWizardProps> = ({ setIsOpen }) => {
+const CreateCharacterWizardPanelRouter: FC<CreateCharWizardProps> = ({
+  setIsOpen,
+}) => {
   const { configureMachine, characterCreationMachineState } =
     useCharacterCreationMachine();
 
-  // TODO:: change to a boolean and WizardLayout just sends CLOSE
-  const handleClose = () => {
+  const onClose = useCallback(() => {
     setIsOpen(false);
-  };
+  }, [setIsOpen]);
+
+  const onComplete = useCallback(
+    ({ character }: { character: Character }) => {
+      console.log("Character creation completed with values:", character);
+      setIsOpen(false);
+    },
+    [setIsOpen],
+  );
 
   switch (characterCreationMachineState) {
     case "INIT":
       configureMachine({
-        onComplete: handleClose,
+        onClose,
+        onComplete,
       });
       return null; // No UI to render in this state
     case "NAME_SELECTION": {
       return (
-        <WizardLayout
-          title="Create Character"
-          hasBack={false}
-          onClose={handleClose}
-        >
+        <WizardLayout title="Create Character" hasBack={false} hasClose={true}>
           <NameSelect />
         </WizardLayout>
       );
     }
     case "CLASS_SELECTION": {
       return (
-        <WizardLayout
-          title="Create Character"
-          hasBack={true}
-          onClose={handleClose}
-        >
+        <WizardLayout title="Create Character" hasBack={true} hasClose={true}>
           <ClassSelect />
         </WizardLayout>
       );
     }
     case "ITEM_SELECTION": {
       return (
-        <WizardLayout
-          title="Create Character"
-          hasBack={true}
-          onClose={handleClose}
-        >
+        <WizardLayout title="Create Character" hasBack={true} hasClose={true}>
           <ItemSelect />
         </WizardLayout>
       );
     }
     case "CREATING_CHARACTER": {
       return (
-        <WizardLayout title="Create Character" onClose={handleClose}>
+        <WizardLayout title="Create Character" hasClose={false}>
           <CharacterCreation />
-        </WizardLayout>
-      );
-    }
-    case "CREATION_SUCCESS": {
-      return (
-        <WizardLayout title="Create Character" onClose={handleClose}>
-          <CharacterCreationSuccess />
         </WizardLayout>
       );
     }
     case "CREATION_FAIL": {
       return (
-        <WizardLayout title="Create Character" onClose={handleClose}>
+        <WizardLayout title="Create Character" hasClose={false}>
           <CharacterCreationFail />
+        </WizardLayout>
+      );
+    }
+    case "CREATION_SUCCESS": {
+      return (
+        <WizardLayout title="Create Character" hasClose={false}>
+          <CharacterCreationSuccess />
         </WizardLayout>
       );
     }
@@ -90,10 +91,12 @@ const CreateCharWizardRenderer: FC<CreateCharWizardProps> = ({ setIsOpen }) => {
   }
 };
 
-export const CreateCharWizard: FC<CreateCharWizardProps> = ({ setIsOpen }) => {
+export const CreateCharacterWizard: FC<CreateCharWizardProps> = ({
+  setIsOpen,
+}) => {
   return (
     <characterCreationContext.Provider>
-      <CreateCharWizardRenderer setIsOpen={setIsOpen} />
+      <CreateCharacterWizardPanelRouter setIsOpen={setIsOpen} />
     </characterCreationContext.Provider>
   );
 };

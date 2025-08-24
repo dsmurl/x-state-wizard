@@ -1,6 +1,9 @@
 import { useCallback } from "react";
 
-import type { CharacterCreationEvent } from "./characterCreationMachine";
+import {
+  CharacterCreationEvent,
+  CharacterCreationMachineActions,
+} from "./characterCreationMachine";
 import { characterCreationContext } from "./characterCreationMachine";
 
 export const useCharacterCreationMachine = () => {
@@ -13,14 +16,12 @@ export const useCharacterCreationMachine = () => {
   );
 
   const configureMachine = useCallback(
-    ({ onComplete }: { onComplete: () => void }) => {
+    ({ onComplete, onClose }: CharacterCreationMachineActions) => {
       if (characterCreationMachineState === "INIT") {
         // Send configuration to the machine to choose next state
         xStateActor.send({
           type: "CONFIG",
-          data: {
-            onComplete,
-          },
+          data: { onClose, onComplete },
         });
 
         // xStateActor.start();  // xState v5 may auto start the machine
@@ -37,8 +38,6 @@ export const useCharacterCreationMachine = () => {
     // );
     xStateActor.send(event);
   };
-
-  // console.log("     characterCreationMachineContext  ::: ", characterCreationMachineContext);
 
   return {
     configureMachine,

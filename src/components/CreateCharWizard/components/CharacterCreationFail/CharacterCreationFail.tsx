@@ -1,4 +1,5 @@
 import { useCallback } from "react";
+
 import { WizardFooter } from "@/components/CreateCharWizard/components/WizardFooter/WizardFooter";
 import { useCharacterCreationMachine } from "@/machines/characterCreationMachine/useCharacterCreationMachine";
 

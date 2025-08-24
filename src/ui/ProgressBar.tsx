@@ -11,7 +11,7 @@ interface ProgressBarProps {
 export const ProgressBar = ({
   waitTime,
   className = "",
-  onComplete
+  onComplete,
 }: ProgressBarProps) => {
   const [progress, setProgress] = useState(0);
 

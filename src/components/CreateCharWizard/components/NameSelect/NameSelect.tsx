@@ -1,4 +1,5 @@
-import { ChangeEvent } from "react";
+import { ChangeEvent, useCallback } from "react";
+
 import * as Form from "@radix-ui/react-form";
 
 import { useCharacterCreationMachine } from "@/machines/characterCreationMachine/useCharacterCreationMachine";
@@ -10,30 +11,30 @@ export const NameSelect = () => {
 
   const name = characterCreationMachineContext.values.character.name;
 
-  const handleNameChange = (e: ChangeEvent<HTMLInputElement>) => {
-    characterCreationMachineSend({
-      type: "SET_NAME",
-      data: { name: e.target.value },
-    });
-  };
+  const handleNameChange = useCallback(
+    (e: ChangeEvent<HTMLInputElement>) => {
+      characterCreationMachineSend({
+        type: "SET_NAME",
+        data: { name: e.target.value },
+      });
+    },
+    [characterCreationMachineSend],
+  );
 
-  const handleSubmit = () => {
+  const handleSubmit = useCallback(() => {
     characterCreationMachineSend({
       type: "CONTINUE",
     });
-  };
+  }, [characterCreationMachineSend]);
 
   return (
     <div>
       <div className="p-6">
-        <p>Choose Your Character Name</p>
+        <p>Choose your character's name</p>
 
         <Form.Root className="w-full max-w-md mx-auto" onSubmit={handleSubmit}>
           <Form.Field name="characterName" className="mb-4">
             <div className="flex justify-between items-baseline mb-2">
-              {/*<Form.Label className="text-lg font-medium">*/}
-              {/*  Character Name*/}
-              {/*</Form.Label>*/}
               <Form.Message
                 className="text-sm text-red-500"
                 match="valueMissing"

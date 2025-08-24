@@ -1,20 +1,21 @@
 import { useCallback } from "react";
+
 import { WizardFooter } from "@/components/CreateCharWizard/components/WizardFooter/WizardFooter";
 import { useCharacterCreationMachine } from "@/machines/characterCreationMachine/useCharacterCreationMachine";
-import toast from "react-hot-toast";
-
-// Character types
-type Character = "warrior" | "wizard" | "archer" | "nerd";
-const characters: Character[] = ["warrior", "wizard", "archer", "nerd"];
+import {
+  type CharacterClass,
+  characters,
+} from "@/machines/characterCreationMachine/characterCreationMachine.types";
 
 export const ClassSelect = () => {
   const { characterCreationMachineSend, characterCreationMachineContext } =
     useCharacterCreationMachine();
 
-  const characterClass = characterCreationMachineContext.values.character.characterClass;
+  const characterClass =
+    characterCreationMachineContext.values.character.characterClass;
 
   const handleCharacterClick = useCallback(
-    (character: Character) => {
+    (character: CharacterClass) => {
       characterCreationMachineSend({
         type: "SET_CLASS",
         data: {
@@ -25,20 +26,18 @@ export const ClassSelect = () => {
     [characterCreationMachineSend],
   );
 
-  const handleSubmit = () => {
+  const handleSubmit = useCallback(() => {
     if (characterClass) {
       characterCreationMachineSend({
         type: "CONTINUE",
       });
-    } else {
-      toast.error("Please select a valid class");
     }
-  };
+  }, [characterClass, characterCreationMachineSend]);
 
   return (
     <div>
       <div className="p-6">
-        <p>Please select a class to continue.</p>
+        <p>Please select a class</p>
 
         <div className="grid grid-cols-2 gap-4 mt-6">
           {characters.map((character) => (

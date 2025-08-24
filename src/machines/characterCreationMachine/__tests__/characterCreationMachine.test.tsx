@@ -2,15 +2,17 @@ import { renderHook, act } from "@testing-library/react";
 
 import { characterCreationContext } from "@/machines/characterCreationMachine/characterCreationMachine";
 import { useCharacterCreationMachine } from "@/machines/characterCreationMachine/useCharacterCreationMachine";
+import { crappyNetworkClient } from "@/crappyApiClient/crappyNetworkClient";
 
-// Mock the network client
+// Mock the network client with a flexible mock function
 vi.mock("@/crappyApiClient/crappyNetworkClient", () => ({
   crappyNetworkClient: {
     createCharacter: vi.fn(),
   },
 }));
+const mockedCreateCharacter = vi.mocked(crappyNetworkClient.createCharacter);
 
-describe("# hook useCharacterCreationMachine()", () => {
+describe("# Hook: useCharacterCreationMachine()", () => {
   beforeEach(() => {
     vi.clearAllMocks();
   });
@@ -26,359 +28,705 @@ describe("# hook useCharacterCreationMachine()", () => {
       wrapper: Wrapper,
     });
 
-    return { mockUseCharacterCreationMachine: result };
+    return { useCharacterCreationMachine: result };
   };
 
-  describe("## initialization", () => {
+  describe("## State: INIT", () => {
     it("returns expected values from hook", async () => {
-      const { mockUseCharacterCreationMachine } = setup();
+      const { useCharacterCreationMachine } = setup();
 
       expect(
-        mockUseCharacterCreationMachine.current.characterCreationMachineState,
+        useCharacterCreationMachine.current.characterCreationMachineState,
       ).toBe("INIT");
 
       expect(
-        mockUseCharacterCreationMachine.current.characterCreationMachineContext,
+        useCharacterCreationMachine.current.characterCreationMachineContext,
       ).toEqual({
         values: { character: {} },
         actions: {
-          onComplete: undefined,
+          onClose: expect.any(Function),
+          onComplete: expect.any(Function),
         },
       });
 
+      expect(typeof useCharacterCreationMachine.current.configureMachine).toBe(
+        "function",
+      );
       expect(
-        typeof mockUseCharacterCreationMachine.current.configureMachine,
-      ).toBe("function");
-      expect(
-        typeof mockUseCharacterCreationMachine.current
-          .characterCreationMachineSend,
+        typeof useCharacterCreationMachine.current.characterCreationMachineSend,
       ).toBe("function");
     });
 
     it("configures the machine when configureMachine is called", async () => {
-      const { mockUseCharacterCreationMachine } = setup();
+      const { useCharacterCreationMachine } = setup();
+      const mockOnClose = vi.fn();
       const mockOnComplete = vi.fn();
 
       expect(
-        mockUseCharacterCreationMachine.current.characterCreationMachineState,
+        useCharacterCreationMachine.current.characterCreationMachineState,
       ).toBe("INIT");
 
       await act(async () => {
-        mockUseCharacterCreationMachine.current.configureMachine({
+        useCharacterCreationMachine.current.configureMachine({
+          onClose: mockOnClose,
           onComplete: mockOnComplete,
         });
       });
 
       expect(
-        mockUseCharacterCreationMachine.current.characterCreationMachineContext
+        useCharacterCreationMachine.current.characterCreationMachineContext
           .actions.onComplete,
       ).toBeDefined();
 
       expect(
-        mockUseCharacterCreationMachine.current.characterCreationMachineState,
+        useCharacterCreationMachine.current.characterCreationMachineState,
       ).toBe("NAME_SELECTION");
     });
   });
 
-  describe("## name selection state", () => {
+  describe("## State: NAME_SELECTION", () => {
     it("handles SET_NAME event", async () => {
-      const { mockUseCharacterCreationMachine } = setup();
+      const { useCharacterCreationMachine } = setup();
+      const mockOnClose = vi.fn();
       const mockOnComplete = vi.fn();
 
       await act(async () => {
-        mockUseCharacterCreationMachine.current.configureMachine({
+        useCharacterCreationMachine.current.configureMachine({
+          onClose: mockOnClose,
           onComplete: mockOnComplete,
         });
       });
 
       expect(
-        mockUseCharacterCreationMachine.current.characterCreationMachineState,
+        useCharacterCreationMachine.current.characterCreationMachineState,
       ).toBe("NAME_SELECTION");
 
       await act(async () => {
-        mockUseCharacterCreationMachine.current.characterCreationMachineSend({
+        useCharacterCreationMachine.current.characterCreationMachineSend({
           type: "SET_NAME",
           data: { name: "Aragorn" },
         });
       });
 
       expect(
-        mockUseCharacterCreationMachine.current.characterCreationMachineContext
+        useCharacterCreationMachine.current.characterCreationMachineContext
           .values.character.name,
       ).toBe("Aragorn");
     });
 
-    it("transitions to CLASS_SELECTION on CONTINUE event", async () => {
-      const { mockUseCharacterCreationMachine } = setup();
+    it("does not transition to CLASS_SELECTION on CONTINUE event if no class is selected", async () => {
+      const { useCharacterCreationMachine } = setup();
+      const mockOnClose = vi.fn();
       const mockOnComplete = vi.fn();
 
       await act(async () => {
-        mockUseCharacterCreationMachine.current.configureMachine({
+        useCharacterCreationMachine.current.configureMachine({
+          onClose: mockOnClose,
           onComplete: mockOnComplete,
         });
       });
 
       await act(async () => {
-        mockUseCharacterCreationMachine.current.characterCreationMachineSend({
+        useCharacterCreationMachine.current.characterCreationMachineSend({
+          type: "CONTINUE",
+        });
+      });
+
+      // Still name selection state because no name is selected
+      expect(
+        useCharacterCreationMachine.current.characterCreationMachineState,
+      ).toBe("NAME_SELECTION");
+    });
+
+    it("transitions to CLASS_SELECTION on CONTINUE event", async () => {
+      const { useCharacterCreationMachine } = setup();
+      const mockOnClose = vi.fn();
+      const mockOnComplete = vi.fn();
+
+      await act(async () => {
+        useCharacterCreationMachine.current.configureMachine({
+          onClose: mockOnClose,
+          onComplete: mockOnComplete,
+        });
+      });
+
+      await act(async () => {
+        useCharacterCreationMachine.current.characterCreationMachineSend({
+          type: "SET_NAME",
+          data: { name: "Aragorn" },
+        });
+      });
+
+      await act(async () => {
+        useCharacterCreationMachine.current.characterCreationMachineSend({
           type: "CONTINUE",
         });
       });
 
       expect(
-        mockUseCharacterCreationMachine.current.characterCreationMachineState,
+        useCharacterCreationMachine.current.characterCreationMachineState,
       ).toBe("CLASS_SELECTION");
     });
   });
 
-  describe("## class selection state", () => {
+  describe("## State: CLASS_SELECTION", () => {
     it("handles SET_CLASS event", async () => {
-      const { mockUseCharacterCreationMachine } = setup();
+      const { useCharacterCreationMachine } = setup();
+      const mockOnClose = vi.fn();
       const mockOnComplete = vi.fn();
 
       await act(async () => {
-        mockUseCharacterCreationMachine.current.configureMachine({
+        useCharacterCreationMachine.current.configureMachine({
+          onClose: mockOnClose,
           onComplete: mockOnComplete,
         });
       });
 
       await act(async () => {
-        mockUseCharacterCreationMachine.current.characterCreationMachineSend({
+        useCharacterCreationMachine.current.characterCreationMachineSend({
+          type: "SET_NAME",
+          data: { name: "Aragorn" },
+        });
+      });
+
+      await act(async () => {
+        useCharacterCreationMachine.current.characterCreationMachineSend({
           type: "CONTINUE",
         });
       });
 
       expect(
-        mockUseCharacterCreationMachine.current.characterCreationMachineState,
+        useCharacterCreationMachine.current.characterCreationMachineState,
       ).toBe("CLASS_SELECTION");
 
       await act(async () => {
-        mockUseCharacterCreationMachine.current.characterCreationMachineSend({
+        useCharacterCreationMachine.current.characterCreationMachineSend({
           type: "SET_CLASS",
-          data: { characterClass: "Warrior" },
+          data: { characterClass: "warrior" },
         });
       });
 
-      // Note: There's a bug in the machine - it assigns to 'name' instead of 'characterClass'
       expect(
-        mockUseCharacterCreationMachine.current.characterCreationMachineContext
+        useCharacterCreationMachine.current.characterCreationMachineContext
           .values.character.characterClass,
-      ).toBe("Warrior");
+      ).toBe("warrior");
     });
 
     it("transitions to ITEM_SELECTION on CONTINUE event", async () => {
-      const { mockUseCharacterCreationMachine } = setup();
+      const { useCharacterCreationMachine } = setup();
+      const mockOnClose = vi.fn();
       const mockOnComplete = vi.fn();
 
       await act(async () => {
-        mockUseCharacterCreationMachine.current.configureMachine({
+        useCharacterCreationMachine.current.configureMachine({
+          onClose: mockOnClose,
           onComplete: mockOnComplete,
         });
       });
 
       await act(async () => {
-        mockUseCharacterCreationMachine.current.characterCreationMachineSend({
+        useCharacterCreationMachine.current.characterCreationMachineSend({
+          type: "SET_NAME",
+          data: { name: "Aragorn" },
+        });
+      });
+
+      await act(async () => {
+        useCharacterCreationMachine.current.characterCreationMachineSend({
           type: "CONTINUE",
         });
       });
 
       await act(async () => {
-        mockUseCharacterCreationMachine.current.characterCreationMachineSend({
+        useCharacterCreationMachine.current.characterCreationMachineSend({
+          type: "SET_CLASS",
+          data: { characterClass: "warrior" },
+        });
+      });
+
+      await act(async () => {
+        useCharacterCreationMachine.current.characterCreationMachineSend({
           type: "CONTINUE",
         });
       });
 
       expect(
-        mockUseCharacterCreationMachine.current.characterCreationMachineState,
+        useCharacterCreationMachine.current.characterCreationMachineState,
       ).toBe("ITEM_SELECTION");
     });
 
     it("transitions back to NAME_SELECTION on GO_BACK event", async () => {
-      const { mockUseCharacterCreationMachine } = setup();
+      const { useCharacterCreationMachine } = setup();
+      const mockOnClose = vi.fn();
       const mockOnComplete = vi.fn();
 
       await act(async () => {
-        mockUseCharacterCreationMachine.current.configureMachine({
+        useCharacterCreationMachine.current.configureMachine({
+          onClose: mockOnClose,
           onComplete: mockOnComplete,
+        });
+      });
+      await act(async () => {
+        useCharacterCreationMachine.current.characterCreationMachineSend({
+          type: "SET_NAME",
+          data: { name: "Aragorn" },
         });
       });
 
       await act(async () => {
-        mockUseCharacterCreationMachine.current.characterCreationMachineSend({
+        useCharacterCreationMachine.current.characterCreationMachineSend({
           type: "CONTINUE",
         });
       });
 
       expect(
-        mockUseCharacterCreationMachine.current.characterCreationMachineState,
+        useCharacterCreationMachine.current.characterCreationMachineState,
       ).toBe("CLASS_SELECTION");
 
       await act(async () => {
-        mockUseCharacterCreationMachine.current.characterCreationMachineSend({
+        useCharacterCreationMachine.current.characterCreationMachineSend({
           type: "GO_BACK",
         });
       });
 
       expect(
-        mockUseCharacterCreationMachine.current.characterCreationMachineState,
+        useCharacterCreationMachine.current.characterCreationMachineState,
       ).toBe("NAME_SELECTION");
     });
   });
 
-  describe("## item selection state", () => {
+  describe("## State: ITEM_SELECTION", () => {
     it("handles SET_ITEM event", async () => {
-      const { mockUseCharacterCreationMachine } = setup();
+      const { useCharacterCreationMachine } = setup();
+      const mockOnClose = vi.fn();
       const mockOnComplete = vi.fn();
 
       // Navigate to ITEM_SELECTION
       await act(async () => {
-        mockUseCharacterCreationMachine.current.configureMachine({
+        useCharacterCreationMachine.current.configureMachine({
+          onClose: mockOnClose,
           onComplete: mockOnComplete,
         });
       });
+
       await act(async () => {
-        mockUseCharacterCreationMachine.current.characterCreationMachineSend({
+        useCharacterCreationMachine.current.characterCreationMachineSend({
+          type: "SET_NAME",
+          data: { name: "Aragorn" },
+        });
+      });
+
+      await act(async () => {
+        useCharacterCreationMachine.current.characterCreationMachineSend({
           type: "CONTINUE",
         });
       });
+
       await act(async () => {
-        mockUseCharacterCreationMachine.current.characterCreationMachineSend({
+        useCharacterCreationMachine.current.characterCreationMachineSend({
+          type: "SET_CLASS",
+          data: { characterClass: "warrior" },
+        });
+      });
+
+      await act(async () => {
+        useCharacterCreationMachine.current.characterCreationMachineSend({
           type: "CONTINUE",
         });
       });
 
       expect(
-        mockUseCharacterCreationMachine.current.characterCreationMachineState,
+        useCharacterCreationMachine.current.characterCreationMachineState,
       ).toBe("ITEM_SELECTION");
 
       await act(async () => {
-        mockUseCharacterCreationMachine.current.characterCreationMachineSend({
+        useCharacterCreationMachine.current.characterCreationMachineSend({
           type: "SET_ITEM",
-          data: { item: "Magic Sword" },
+          data: { item: "crown" },
         });
       });
 
-      // Note: There's a bug in the machine - it assigns to 'name' instead of 'item'
       expect(
-        mockUseCharacterCreationMachine.current.characterCreationMachineContext
+        useCharacterCreationMachine.current.characterCreationMachineContext
           .values.character.item,
-      ).toBe("Magic Sword");
+      ).toBe("crown");
     });
 
     // it("transitions to CREATING_CHARACTER on CONTINUE event", async () => {
-    //   const { mockUseCharacterCreationMachine } = setup();
+    //   const { useCharacterCreationMachine } = setup();
     //   const mockOnComplete = vi.fn();
     //
     //   // Navigate to ITEM_SELECTION
     //   await act(async () => {
-    //     mockUseCharacterCreationMachine.current.configureMachine({
+    //     useCharacterCreationMachine.current.configureMachine({
     //       onComplete: mockOnComplete,
     //     });
     //   });
     //
     //   await act(async () => {
-    //     mockUseCharacterCreationMachine.current.characterCreationMachineSend({
+    //     useCharacterCreationMachine.current.characterCreationMachineSend({
     //       type: "CONTINUE",
     //     });
     //   });
     //
     //   await act(async () => {
-    //     mockUseCharacterCreationMachine.current.characterCreationMachineSend({
+    //     useCharacterCreationMachine.current.characterCreationMachineSend({
     //       type: "CONTINUE",
     //     });
     //   });
     //
     //   await act(async () => {
-    //     mockUseCharacterCreationMachine.current.characterCreationMachineSend({
+    //     useCharacterCreationMachine.current.characterCreationMachineSend({
     //       type: "CONTINUE",
     //     });
     //   });
     //
     //   expect(
-    //     mockUseCharacterCreationMachine.current.characterCreationMachineState,
+    //     useCharacterCreationMachine.current.characterCreationMachineState,
     //   ).toBe("CREATING_CHARACTER");
     // });
 
     it("transitions back to CLASS_SELECTION on GO_BACK event", async () => {
-      const { mockUseCharacterCreationMachine } = setup();
+      const { useCharacterCreationMachine } = setup();
+      const mockOnClose = vi.fn();
       const mockOnComplete = vi.fn();
 
       // Navigate to ITEM_SELECTION
       await act(async () => {
-        mockUseCharacterCreationMachine.current.configureMachine({
+        useCharacterCreationMachine.current.configureMachine({
+          onClose: mockOnClose,
           onComplete: mockOnComplete,
         });
       });
+
       await act(async () => {
-        mockUseCharacterCreationMachine.current.characterCreationMachineSend({
+        useCharacterCreationMachine.current.characterCreationMachineSend({
+          type: "SET_NAME",
+          data: { name: "Aragorn" },
+        });
+      });
+
+      await act(async () => {
+        useCharacterCreationMachine.current.characterCreationMachineSend({
           type: "CONTINUE",
         });
       });
+
       await act(async () => {
-        mockUseCharacterCreationMachine.current.characterCreationMachineSend({
+        useCharacterCreationMachine.current.characterCreationMachineSend({
+          type: "SET_CLASS",
+          data: { characterClass: "warrior" },
+        });
+      });
+
+      await act(async () => {
+        useCharacterCreationMachine.current.characterCreationMachineSend({
           type: "CONTINUE",
         });
       });
 
       expect(
-        mockUseCharacterCreationMachine.current.characterCreationMachineState,
+        useCharacterCreationMachine.current.characterCreationMachineState,
       ).toBe("ITEM_SELECTION");
 
       await act(async () => {
-        mockUseCharacterCreationMachine.current.characterCreationMachineSend({
+        useCharacterCreationMachine.current.characterCreationMachineSend({
           type: "GO_BACK",
         });
       });
 
       expect(
-        mockUseCharacterCreationMachine.current.characterCreationMachineState,
+        useCharacterCreationMachine.current.characterCreationMachineState,
       ).toBe("CLASS_SELECTION");
     });
   });
 
-  describe("## creation fail state", () => {
+  describe("## State: CREATION_FAIL", () => {
     it("transitions to NAME_SELECTION on RETRY event", async () => {
-      const { mockUseCharacterCreationMachine } = setup();
+      // Mock API to throw an error - this will trigger the invoke onError
+      mockedCreateCharacter.mockRejectedValueOnce(
+        new Error("API request failed"),
+      );
+
+      const { useCharacterCreationMachine } = setup();
+      const mockOnClose = vi.fn();
       const mockOnComplete = vi.fn();
 
-      // Navigate to CREATION_FAIL (simulate a failed creation)
       await act(async () => {
-        mockUseCharacterCreationMachine.current.configureMachine({
+        useCharacterCreationMachine.current.configureMachine({
+          onClose: mockOnClose,
           onComplete: mockOnComplete,
         });
       });
 
-      // Manually send to CREATION_FAIL state for testing
+      // Navigate through the complete flow to trigger character creation
       await act(async () => {
-        mockUseCharacterCreationMachine.current.characterCreationMachineSend({
-          type: "CREATION_FAILED",
+        useCharacterCreationMachine.current.characterCreationMachineSend({
+          type: "SET_NAME",
+          data: { name: "Aragorn" },
         });
       });
 
-      // This won't work as expected because CREATION_FAILED event is not handled in most states
-      // You might need to adjust the machine to handle this event properly
+      await act(async () => {
+        useCharacterCreationMachine.current.characterCreationMachineSend({
+          type: "CONTINUE",
+        });
+      });
+
+      await act(async () => {
+        useCharacterCreationMachine.current.characterCreationMachineSend({
+          type: "SET_CLASS",
+          data: { characterClass: "warrior" },
+        });
+      });
+
+      await act(async () => {
+        useCharacterCreationMachine.current.characterCreationMachineSend({
+          type: "CONTINUE",
+        });
+      });
+
+      await act(async () => {
+        useCharacterCreationMachine.current.characterCreationMachineSend({
+          type: "SET_ITEM",
+          data: { item: "potion" },
+        });
+      });
+
+      // Trigger character creation which should fail
+      await act(async () => {
+        useCharacterCreationMachine.current.characterCreationMachineSend({
+          type: "CONTINUE",
+        });
+      });
+
+      // Should be in CREATION_FAIL state
+      expect(
+        useCharacterCreationMachine.current.characterCreationMachineState,
+      ).toBe("CREATION_FAIL");
+
+      // Test RETRY event transitions back to NAME_SELECTION
+      await act(async () => {
+        useCharacterCreationMachine.current.characterCreationMachineSend({
+          type: "RETRY",
+        });
+      });
+
+      expect(
+        useCharacterCreationMachine.current.characterCreationMachineState,
+      ).toBe("NAME_SELECTION");
     });
   });
 
-  describe("## creation success state", () => {
-    it("transitions to CLOSING on CONTINUE event", async () => {
-      const { mockUseCharacterCreationMachine } = setup();
+  describe("## State: CREATION_SUCCESS", () => {
+    it("transitions to CHARACTER_COMPLETED on CONTINUE event", async () => {
+      // Mock API to succeed - this will trigger the invoke onDone
+      mockedCreateCharacter.mockResolvedValueOnce({ message: "Done" });
+
+      const { useCharacterCreationMachine } = setup();
+      const mockOnClose = vi.fn();
       const mockOnComplete = vi.fn();
 
       await act(async () => {
-        mockUseCharacterCreationMachine.current.configureMachine({
+        useCharacterCreationMachine.current.configureMachine({
+          onClose: mockOnClose,
           onComplete: mockOnComplete,
         });
       });
 
-      // Manually send to CREATION_SUCCESS state for testing
+      // Navigate through the complete flow to trigger character creation
       await act(async () => {
-        mockUseCharacterCreationMachine.current.characterCreationMachineSend({
-          type: "CREATION_SUCCEEDED",
+        useCharacterCreationMachine.current.characterCreationMachineSend({
+          type: "SET_NAME",
+          data: { name: "Aragorn" },
         });
       });
 
-      // This won't work as expected because CREATION_SUCCEEDED event is not handled in most states
-      // You might need to adjust the machine to handle this event properly
+      await act(async () => {
+        useCharacterCreationMachine.current.characterCreationMachineSend({
+          type: "CONTINUE",
+        });
+      });
+
+      await act(async () => {
+        useCharacterCreationMachine.current.characterCreationMachineSend({
+          type: "SET_CLASS",
+          data: { characterClass: "warrior" },
+        });
+      });
+
+      await act(async () => {
+        useCharacterCreationMachine.current.characterCreationMachineSend({
+          type: "CONTINUE",
+        });
+      });
+
+      await act(async () => {
+        useCharacterCreationMachine.current.characterCreationMachineSend({
+          type: "SET_ITEM",
+          data: { item: "ring" },
+        });
+      });
+
+      // Trigger character creation which should succeed
+      await act(async () => {
+        useCharacterCreationMachine.current.characterCreationMachineSend({
+          type: "CONTINUE",
+        });
+      });
+
+      // Should be in CREATION_SUCCESS state
+      expect(
+        useCharacterCreationMachine.current.characterCreationMachineState,
+      ).toBe("CREATION_SUCCESS");
+
+      // Test CONTINUE event transitions to CHARACTER_COMPLETED
+      await act(async () => {
+        useCharacterCreationMachine.current.characterCreationMachineSend({
+          type: "CONTINUE",
+        });
+      });
+
+      expect(
+        useCharacterCreationMachine.current.characterCreationMachineState,
+      ).toBe("CHARACTER_COMPLETED");
+
+      // Verify onComplete was called with the character data
+      expect(mockOnComplete).toHaveBeenCalledWith({
+        character: {
+          name: "Aragorn",
+          characterClass: "warrior",
+          item: "ring",
+        },
+      });
+    });
+  });
+
+  describe("## Message: CLOSE functionality", () => {
+    it("transitions to CLOSING on CLOSE event from NAME_SELECTION", async () => {
+      const { useCharacterCreationMachine } = setup();
+      const mockOnClose = vi.fn();
+      const mockOnComplete = vi.fn();
+
+      await act(async () => {
+        useCharacterCreationMachine.current.configureMachine({
+          onClose: mockOnClose,
+          onComplete: mockOnComplete,
+        });
+      });
+
+      expect(
+        useCharacterCreationMachine.current.characterCreationMachineState,
+      ).toBe("NAME_SELECTION");
+
+      await act(async () => {
+        useCharacterCreationMachine.current.characterCreationMachineSend({
+          type: "CLOSE",
+        });
+      });
+
+      expect(
+        useCharacterCreationMachine.current.characterCreationMachineState,
+      ).toBe("CLOSING");
+
+      expect(mockOnClose).toHaveBeenCalled();
+    });
+
+    it("transitions to CLOSING on CLOSE event from CLASS_SELECTION", async () => {
+      const { useCharacterCreationMachine } = setup();
+      const mockOnClose = vi.fn();
+      const mockOnComplete = vi.fn();
+
+      await act(async () => {
+        useCharacterCreationMachine.current.configureMachine({
+          onClose: mockOnClose,
+          onComplete: mockOnComplete,
+        });
+      });
+
+      await act(async () => {
+        useCharacterCreationMachine.current.characterCreationMachineSend({
+          type: "SET_NAME",
+          data: { name: "Aragorn" },
+        });
+      });
+
+      await act(async () => {
+        useCharacterCreationMachine.current.characterCreationMachineSend({
+          type: "CONTINUE",
+        });
+      });
+
+      expect(
+        useCharacterCreationMachine.current.characterCreationMachineState,
+      ).toBe("CLASS_SELECTION");
+
+      await act(async () => {
+        useCharacterCreationMachine.current.characterCreationMachineSend({
+          type: "CLOSE",
+        });
+      });
+
+      expect(
+        useCharacterCreationMachine.current.characterCreationMachineState,
+      ).toBe("CLOSING");
+
+      expect(mockOnClose).toHaveBeenCalled();
+    });
+
+    it("transitions to CLOSING on CLOSE event from ITEM_SELECTION", async () => {
+      const { useCharacterCreationMachine } = setup();
+      const mockOnClose = vi.fn();
+      const mockOnComplete = vi.fn();
+
+      await act(async () => {
+        useCharacterCreationMachine.current.configureMachine({
+          onClose: mockOnClose,
+          onComplete: mockOnComplete,
+        });
+      });
+
+      await act(async () => {
+        useCharacterCreationMachine.current.characterCreationMachineSend({
+          type: "SET_NAME",
+          data: { name: "Aragorn" },
+        });
+      });
+
+      await act(async () => {
+        useCharacterCreationMachine.current.characterCreationMachineSend({
+          type: "CONTINUE",
+        });
+      });
+
+      await act(async () => {
+        useCharacterCreationMachine.current.characterCreationMachineSend({
+          type: "SET_CLASS",
+          data: { characterClass: "warrior" },
+        });
+      });
+
+      await act(async () => {
+        useCharacterCreationMachine.current.characterCreationMachineSend({
+          type: "CONTINUE",
+        });
+      });
+
+      expect(
+        useCharacterCreationMachine.current.characterCreationMachineState,
+      ).toBe("ITEM_SELECTION");
+
+      await act(async () => {
+        useCharacterCreationMachine.current.characterCreationMachineSend({
+          type: "CLOSE",
+        });
+      });
+
+      expect(
+        useCharacterCreationMachine.current.characterCreationMachineState,
+      ).toBe("CLOSING");
+
+      expect(mockOnClose).toHaveBeenCalled();
     });
   });
 });

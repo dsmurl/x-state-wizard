@@ -1,4 +1,4 @@
-import { FC, ReactNode } from "react";
+import { FC, ReactNode, useCallback } from "react";
 
 import * as Dialog from "@radix-ui/react-dialog";
 import { ChevronLeftIcon, Cross1Icon } from "@radix-ui/react-icons";
@@ -10,20 +10,24 @@ type WizardLayoutProps = {
   title: string;
   children: ReactNode;
   hasBack?: boolean;
-  onClose: () => void;
+  hasClose?: boolean;
 };
 
 export const WizardLayout: FC<WizardLayoutProps> = ({
   title,
   children,
   hasBack,
-  onClose,
+  hasClose,
 }) => {
   const { characterCreationMachineSend } = useCharacterCreationMachine();
 
-  const handleBack = () => {
+  const handleClose = useCallback(() => {
+    characterCreationMachineSend({ type: "CLOSE" });
+  }, [characterCreationMachineSend]);
+
+  const handleBack = useCallback(() => {
     characterCreationMachineSend({ type: "GO_BACK" });
-  };
+  }, [characterCreationMachineSend]);
 
   return (
     <div className="flex flex-col h-full bg-gray-800 rounded-md overflow-hidden min-w-[320px]">
@@ -42,15 +46,17 @@ export const WizardLayout: FC<WizardLayoutProps> = ({
           ) : null}
           <h2 className="text-xl font-medium text-gray-900">{title}</h2>
         </div>
-        <Dialog.Close asChild>
-          <Button
-            onClick={onClose}
-            aria-label="Close"
-            data-testid="wizard-layout-close-button"
-          >
-            <Cross1Icon className="h-5 w-5" />
-          </Button>
-        </Dialog.Close>
+        {hasClose ? (
+          <Dialog.Close asChild>
+            <Button
+              onClick={handleClose}
+              aria-label="Close"
+              data-testid="wizard-layout-close-button"
+            >
+              <Cross1Icon className="h-5 w-5" />
+            </Button>
+          </Dialog.Close>
+        ) : null}
       </div>
 
       {/* Content */}

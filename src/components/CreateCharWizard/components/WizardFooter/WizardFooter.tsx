@@ -6,8 +6,6 @@ type WizardFooterProps = {
   continueButtonText?: string;
   continueDisabled?: boolean;
   isLoading?: boolean;
-  handleBack?: () => void;
-  backButtonText?: string;
 };
 
 export const WizardFooter: FC<WizardFooterProps> = ({
@@ -15,8 +13,6 @@ export const WizardFooter: FC<WizardFooterProps> = ({
   continueButtonText = "Continue",
   continueDisabled = false,
   isLoading = false,
-  handleBack = () => null,
-  backButtonText = "Back",
 }) => {
   return (
     <div className="p-4 flex justify-end bg-white border-t border-t-gray-300">

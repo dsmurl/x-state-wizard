@@ -3,7 +3,6 @@
 @theme {
 }
 
-
 :root {
   max-width: 1280px;
   margin: 0 auto;
@@ -45,8 +44,3 @@
     animation: logo-spin infinite 2s linear;
   }
 }
-
-
-
-
-

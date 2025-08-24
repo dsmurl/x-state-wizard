@@ -1,11 +1,11 @@
 import { useCallback } from "react";
+
 import { WizardFooter } from "@/components/CreateCharWizard/components/WizardFooter/WizardFooter";
 import { useCharacterCreationMachine } from "@/machines/characterCreationMachine/useCharacterCreationMachine";
-import toast from "react-hot-toast";
-
-// Item types
-type Item = "ring" | "potion" | "crown" | "calc";
-const items: Item[] = ["ring", "potion", "crown", "calc"];
+import {
+  type Item,
+  items,
+} from "@/machines/characterCreationMachine/characterCreationMachine.types";
 
 export const ItemSelect = () => {
   const { characterCreationMachineSend, characterCreationMachineContext } =
@@ -25,20 +25,18 @@ export const ItemSelect = () => {
     [characterCreationMachineSend],
   );
 
-  const handleSubmit = () => {
+  const handleSubmit = useCallback(() => {
     if (item) {
       characterCreationMachineSend({
         type: "CONTINUE",
       });
-    } else {
-      toast.error("Please select a valid item");
     }
-  };
+  }, [characterCreationMachineSend, item]);
 
   return (
     <div>
       <div className="p-6">
-        <p>Please select an item to continue.</p>
+        <p>Please select an item</p>
 
         <div className="grid grid-cols-2 gap-4 mt-6">
           {items.map((anItem) => (
