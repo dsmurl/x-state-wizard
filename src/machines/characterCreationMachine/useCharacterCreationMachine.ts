@@ -16,12 +16,12 @@ export const useCharacterCreationMachine = () => {
   );
 
   const configureMachine = useCallback(
-    ({ onComplete, onClose }: CharacterCreationMachineActions) => {
+    ({ onFlowSuccess, onClose }: CharacterCreationMachineActions) => {
       if (characterCreationMachineState === "INIT") {
         // Send configuration to the machine to choose next state
         xStateActor.send({
           type: "CONFIG",
-          data: { onClose, onComplete },
+          data: { onClose, onFlowSuccess },
         });
 
         // xStateActor.start();  // xState v5 may auto start the machine

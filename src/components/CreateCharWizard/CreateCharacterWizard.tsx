@@ -28,19 +28,15 @@ const CreateCharacterWizardPanelRouter: FC<CreateCharWizardProps> = ({
     setIsOpen(false);
   }, [setIsOpen]);
 
-  const onComplete = useCallback(
-    ({ character }: { character: Character }) => {
-      console.log("Character creation completed with values:", character);
-      setIsOpen(false);
-    },
-    [setIsOpen],
-  );
+  const onFlowSuccess = ({ character }: { character: Character }) => {
+    console.log("Character creation completed with values:", character);
+  };
 
   switch (characterCreationMachineState) {
     case "INIT":
       configureMachine({
         onClose,
-        onComplete,
+        onFlowSuccess,
       });
       return null; // No UI to render in this state
     case "NAME_SELECTION": {

@@ -15,7 +15,7 @@ export type Character = {
 
 export type CharacterCreationMachineActions = {
   onClose: () => void;
-  onComplete: ({ character }: { character: Character }) => void;
+  onFlowSuccess: ({ character }: { character: Character }) => void;
 };
 
 type CharacterCreationContext = {
@@ -30,7 +30,7 @@ export type CharacterCreationEvent =
       type: "CONFIG";
       data: {
         onClose: () => void;
-        onComplete: ({ character }: { character: Character }) => void;
+        onFlowSuccess: ({ character }: { character: Character }) => void;
       };
     }
   | { type: "SET_NAME"; data: { name: string } }
@@ -48,7 +48,7 @@ export const characterCreationMachine = setup({
     events: {} as CharacterCreationEvent,
   },
   actors: {
-    createCharacter: fromPromise(async () => {
+    createCharacterActor: fromPromise(async () => {
       return await crappyNetworkClient.createCharacter();
     }),
   },
@@ -82,9 +82,9 @@ export const characterCreationMachine = setup({
         console.warn(
           "characterCreationMachine action onClose was called before initialized",
         ),
-      onComplete: () =>
+      onFlowSuccess: () =>
         console.warn(
-          "characterCreationMachine action onComplete was called before initialized",
+          "characterCreationMachine action onFlowSuccess was called before initialized",
         ),
     },
   },
@@ -98,7 +98,7 @@ export const characterCreationMachine = setup({
               actions: {
                 ...context.actions,
                 onClose: event.data.onClose,
-                onComplete: event.data.onComplete,
+                onFlowSuccess: event.data.onFlowSuccess,
               },
             })),
           ],
@@ -225,7 +225,7 @@ export const characterCreationMachine = setup({
     },
     CREATING_CHARACTER: {
       invoke: {
-        src: "createCharacter",
+        src: "createCharacterActor",
         onDone: {
           target: "CREATION_SUCCESS",
         },
@@ -260,9 +260,16 @@ export const characterCreationMachine = setup({
       },
     },
     CREATION_SUCCESS: {
+      entry: [
+        ({ context }) => {
+          context.actions.onFlowSuccess({
+            character: context.values.character,
+          });
+        },
+      ],
       on: {
         CONTINUE: {
-          target: "CHARACTER_COMPLETED",
+          target: "CLOSING",
         },
         "*": {
           actions: [
@@ -279,17 +286,6 @@ export const characterCreationMachine = setup({
       entry: [
         ({ context }) => {
           context.actions.onClose();
-        },
-        assign({
-          values: () => ({ character: {} }), // Reset values
-        }),
-      ],
-    },
-    CHARACTER_COMPLETED: {
-      type: "final",
-      entry: [
-        ({ context }) => {
-          context.actions.onComplete({ character: context.values.character });
         },
         assign({
           values: () => ({ character: {} }), // Reset values
