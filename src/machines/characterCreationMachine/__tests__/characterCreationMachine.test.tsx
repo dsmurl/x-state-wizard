@@ -45,7 +45,7 @@ describe("# Hook: useCharacterCreationMachine()", () => {
         values: { character: {} },
         actions: {
           onClose: expect.any(Function),
-          onComplete: expect.any(Function),
+          onFlowSuccess: expect.any(Function),
         },
       });
 
@@ -60,7 +60,7 @@ describe("# Hook: useCharacterCreationMachine()", () => {
     it("configures the machine when configureMachine is called", async () => {
       const { useCharacterCreationMachine } = setup();
       const mockOnClose = vi.fn();
-      const mockOnComplete = vi.fn();
+      const mockOnFlowSuccess = vi.fn();
 
       expect(
         useCharacterCreationMachine.current.characterCreationMachineState,
@@ -69,13 +69,13 @@ describe("# Hook: useCharacterCreationMachine()", () => {
       await act(async () => {
         useCharacterCreationMachine.current.configureMachine({
           onClose: mockOnClose,
-          onComplete: mockOnComplete,
+          onFlowSuccess: mockOnFlowSuccess,
         });
       });
 
       expect(
         useCharacterCreationMachine.current.characterCreationMachineContext
-          .actions.onComplete,
+          .actions.onFlowSuccess,
       ).toBeDefined();
 
       expect(
@@ -88,12 +88,12 @@ describe("# Hook: useCharacterCreationMachine()", () => {
     it("handles SET_NAME event", async () => {
       const { useCharacterCreationMachine } = setup();
       const mockOnClose = vi.fn();
-      const mockOnComplete = vi.fn();
+      const mockOnFlowSuccess = vi.fn();
 
       await act(async () => {
         useCharacterCreationMachine.current.configureMachine({
           onClose: mockOnClose,
-          onComplete: mockOnComplete,
+          onFlowSuccess: mockOnFlowSuccess,
         });
       });
 
@@ -117,12 +117,12 @@ describe("# Hook: useCharacterCreationMachine()", () => {
     it("does not transition to CLASS_SELECTION on CONTINUE event if no class is selected", async () => {
       const { useCharacterCreationMachine } = setup();
       const mockOnClose = vi.fn();
-      const mockOnComplete = vi.fn();
+      const mockOnFlowSuccess = vi.fn();
 
       await act(async () => {
         useCharacterCreationMachine.current.configureMachine({
           onClose: mockOnClose,
-          onComplete: mockOnComplete,
+          onFlowSuccess: mockOnFlowSuccess,
         });
       });
 
@@ -141,12 +141,12 @@ describe("# Hook: useCharacterCreationMachine()", () => {
     it("transitions to CLASS_SELECTION on CONTINUE event", async () => {
       const { useCharacterCreationMachine } = setup();
       const mockOnClose = vi.fn();
-      const mockOnComplete = vi.fn();
+      const mockOnFlowSuccess = vi.fn();
 
       await act(async () => {
         useCharacterCreationMachine.current.configureMachine({
           onClose: mockOnClose,
-          onComplete: mockOnComplete,
+          onFlowSuccess: mockOnFlowSuccess,
         });
       });
 
@@ -173,12 +173,12 @@ describe("# Hook: useCharacterCreationMachine()", () => {
     it("handles SET_CLASS event", async () => {
       const { useCharacterCreationMachine } = setup();
       const mockOnClose = vi.fn();
-      const mockOnComplete = vi.fn();
+      const mockOnFlowSuccess = vi.fn();
 
       await act(async () => {
         useCharacterCreationMachine.current.configureMachine({
           onClose: mockOnClose,
-          onComplete: mockOnComplete,
+          onFlowSuccess: mockOnFlowSuccess,
         });
       });
 
@@ -215,12 +215,12 @@ describe("# Hook: useCharacterCreationMachine()", () => {
     it("transitions to ITEM_SELECTION on CONTINUE event", async () => {
       const { useCharacterCreationMachine } = setup();
       const mockOnClose = vi.fn();
-      const mockOnComplete = vi.fn();
+      const mockOnFlowSuccess = vi.fn();
 
       await act(async () => {
         useCharacterCreationMachine.current.configureMachine({
           onClose: mockOnClose,
-          onComplete: mockOnComplete,
+          onFlowSuccess: mockOnFlowSuccess,
         });
       });
 
@@ -258,12 +258,12 @@ describe("# Hook: useCharacterCreationMachine()", () => {
     it("transitions back to NAME_SELECTION on GO_BACK event", async () => {
       const { useCharacterCreationMachine } = setup();
       const mockOnClose = vi.fn();
-      const mockOnComplete = vi.fn();
+      const mockOnFlowSuccess = vi.fn();
 
       await act(async () => {
         useCharacterCreationMachine.current.configureMachine({
           onClose: mockOnClose,
-          onComplete: mockOnComplete,
+          onFlowSuccess: mockOnFlowSuccess,
         });
       });
       await act(async () => {
@@ -299,13 +299,13 @@ describe("# Hook: useCharacterCreationMachine()", () => {
     it("handles SET_ITEM event", async () => {
       const { useCharacterCreationMachine } = setup();
       const mockOnClose = vi.fn();
-      const mockOnComplete = vi.fn();
+      const mockOnFlowSuccess = vi.fn();
 
       // Navigate to ITEM_SELECTION
       await act(async () => {
         useCharacterCreationMachine.current.configureMachine({
           onClose: mockOnClose,
-          onComplete: mockOnComplete,
+          onFlowSuccess: mockOnFlowSuccess,
         });
       });
 
@@ -354,12 +354,12 @@ describe("# Hook: useCharacterCreationMachine()", () => {
 
     // it("transitions to CREATING_CHARACTER on CONTINUE event", async () => {
     //   const { useCharacterCreationMachine } = setup();
-    //   const mockOnComplete = vi.fn();
+    //   const mockOnFlowSuccess = vi.fn();
     //
     //   // Navigate to ITEM_SELECTION
     //   await act(async () => {
     //     useCharacterCreationMachine.current.configureMachine({
-    //       onComplete: mockOnComplete,
+    //       onFlowSuccess: mockOnFlowSuccess,
     //     });
     //   });
     //
@@ -389,13 +389,13 @@ describe("# Hook: useCharacterCreationMachine()", () => {
     it("transitions back to CLASS_SELECTION on GO_BACK event", async () => {
       const { useCharacterCreationMachine } = setup();
       const mockOnClose = vi.fn();
-      const mockOnComplete = vi.fn();
+      const mockOnFlowSuccess = vi.fn();
 
       // Navigate to ITEM_SELECTION
       await act(async () => {
         useCharacterCreationMachine.current.configureMachine({
           onClose: mockOnClose,
-          onComplete: mockOnComplete,
+          onFlowSuccess: mockOnFlowSuccess,
         });
       });
 
@@ -450,12 +450,12 @@ describe("# Hook: useCharacterCreationMachine()", () => {
 
       const { useCharacterCreationMachine } = setup();
       const mockOnClose = vi.fn();
-      const mockOnComplete = vi.fn();
+      const mockOnFlowSuccess = vi.fn();
 
       await act(async () => {
         useCharacterCreationMachine.current.configureMachine({
           onClose: mockOnClose,
-          onComplete: mockOnComplete,
+          onFlowSuccess: mockOnFlowSuccess,
         });
       });
 
@@ -525,12 +525,12 @@ describe("# Hook: useCharacterCreationMachine()", () => {
 
       const { useCharacterCreationMachine } = setup();
       const mockOnClose = vi.fn();
-      const mockOnComplete = vi.fn();
+      const mockOnFlowSuccess = vi.fn();
 
       await act(async () => {
         useCharacterCreationMachine.current.configureMachine({
           onClose: mockOnClose,
-          onComplete: mockOnComplete,
+          onFlowSuccess: mockOnFlowSuccess,
         });
       });
 
@@ -589,10 +589,10 @@ describe("# Hook: useCharacterCreationMachine()", () => {
 
       expect(
         useCharacterCreationMachine.current.characterCreationMachineState,
-      ).toBe("CHARACTER_COMPLETED");
+      ).toBe("CLOSING");
 
-      // Verify onComplete was called with the character data
-      expect(mockOnComplete).toHaveBeenCalledWith({
+      // Verify onFlowSuccess was called with the character data
+      expect(mockOnFlowSuccess).toHaveBeenCalledWith({
         character: {
           name: "Aragorn",
           characterClass: "warrior",
@@ -606,12 +606,12 @@ describe("# Hook: useCharacterCreationMachine()", () => {
     it("transitions to CLOSING on CLOSE event from NAME_SELECTION", async () => {
       const { useCharacterCreationMachine } = setup();
       const mockOnClose = vi.fn();
-      const mockOnComplete = vi.fn();
+      const mockOnFlowSuccess = vi.fn();
 
       await act(async () => {
         useCharacterCreationMachine.current.configureMachine({
           onClose: mockOnClose,
-          onComplete: mockOnComplete,
+          onFlowSuccess: mockOnFlowSuccess,
         });
       });
 
@@ -635,12 +635,12 @@ describe("# Hook: useCharacterCreationMachine()", () => {
     it("transitions to CLOSING on CLOSE event from CLASS_SELECTION", async () => {
       const { useCharacterCreationMachine } = setup();
       const mockOnClose = vi.fn();
-      const mockOnComplete = vi.fn();
+      const mockOnFlowSuccess = vi.fn();
 
       await act(async () => {
         useCharacterCreationMachine.current.configureMachine({
           onClose: mockOnClose,
-          onComplete: mockOnComplete,
+          onFlowSuccess: mockOnFlowSuccess,
         });
       });
 
@@ -677,12 +677,12 @@ describe("# Hook: useCharacterCreationMachine()", () => {
     it("transitions to CLOSING on CLOSE event from ITEM_SELECTION", async () => {
       const { useCharacterCreationMachine } = setup();
       const mockOnClose = vi.fn();
-      const mockOnComplete = vi.fn();
+      const mockOnFlowSuccess = vi.fn();
 
       await act(async () => {
         useCharacterCreationMachine.current.configureMachine({
           onClose: mockOnClose,
-          onComplete: mockOnComplete,
+          onFlowSuccess: mockOnFlowSuccess,
         });
       });
 
