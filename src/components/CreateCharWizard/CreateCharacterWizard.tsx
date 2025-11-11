@@ -7,11 +7,12 @@ import { WizardLayout } from "@/components/CreateCharWizard/components/WizardLay
 import { CharacterCreation } from "@/components/CreateCharWizard/components/CharacterCreation/CharacterCreation";
 import { CharacterCreationSuccess } from "@/components/CreateCharWizard/components/CharacterCreationSuccess/CharacterCreationSuccess";
 import { CharacterCreationFail } from "@/components/CreateCharWizard/components/CharacterCreationFail/CharacterCreationFail";
-
 import {
   Character,
   characterCreationContext,
 } from "@/machines/characterCreationMachine/characterCreationMachine";
+import { CharacterCreationContextDebugSubscriber } from "@/components/DebugPanel/CharacterCreationContextDebugSubscriber";
+import { useDebugContext } from "@/components/DebugPanel/DebugContextProvider";
 import { useCharacterCreationMachine } from "@/machines/characterCreationMachine/useCharacterCreationMachine";
 
 type CreateCharWizardProps = {
@@ -92,6 +93,7 @@ export const CreateCharacterWizard: FC<CreateCharWizardProps> = ({
 }) => {
   return (
     <characterCreationContext.Provider>
+      <CharacterCreationContextDebugSubscriber />
       <CreateCharacterWizardPanelRouter setIsOpen={setIsOpen} />
     </characterCreationContext.Provider>
   );

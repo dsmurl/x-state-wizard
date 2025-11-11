@@ -1,7 +1,9 @@
 import reactLogo from "../assets/react.svg?url";
-import { CreateCharDialog } from "@/components/CreateCharDialog/CreateCharDialog";
 
-export const Home = () => {
+import { CreateCharDialog } from "@/components/CreateCharDialog/CreateCharDialog";
+import { DebugContextProvider } from "@/components/DebugPanel/DebugContextProvider";
+
+const HomeContent = () => {
   return (
     <div className="flex flex-col items-center min-h-screen pt-20">
       <img src={reactLogo} className="logo react" alt="React logo" />
@@ -12,3 +14,9 @@ export const Home = () => {
     </div>
   );
 };
+
+export const Home = () => (
+  <DebugContextProvider>
+    <HomeContent />
+  </DebugContextProvider>
+);
