@@ -50,7 +50,7 @@ export const ItemSelect = () => {
               }`}
             >
               <img
-                src={`/images/items/${anItem}.webp`}
+                src={`images/items/${anItem}.webp`}
                 alt={`${anItem} item`}
                 className="w-32 h-32 object-contain mb-2"
               />

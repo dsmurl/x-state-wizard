@@ -11,7 +11,8 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "test:coverage": "vitest run --coverage",
-    "prettier": "prettier --write \"src/**/*.{js,jsx,ts,tsx,json,css,md}\""
+    "prettier": "prettier --write \"src/**/*.{js,jsx,ts,tsx,json,css,md}\"",
+    "deploy": "pnpm run build && npx gh-pages -d dist"
   },
   "dependencies": {
     "@radix-ui/react-checkbox": "^1.3.2",

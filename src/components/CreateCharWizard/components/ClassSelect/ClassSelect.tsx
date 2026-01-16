@@ -51,7 +51,7 @@ export const ClassSelect = () => {
               }`}
             >
               <img
-                src={`/images/char/${character}.webp`}
+                src={`images/char/${character}.webp`}
                 alt={`${character} character`}
                 className="w-32 h-32 object-contain mb-2"
               />
