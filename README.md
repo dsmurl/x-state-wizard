@@ -2,7 +2,7 @@
 
 Don't stay up all night making awesome RPG characters.  There's always tomorrow.
 
-![Preview](images/marketing/screenshot-1.png)
+![Preview](https://dsmurl.github.io/x-state-wizard/images/marketing/screenshot-1.png)
 
 ### To run
 
