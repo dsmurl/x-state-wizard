@@ -1,10 +1,10 @@
 import { useCallback } from "react";
 
+import { characterCreationContext } from "./characterCreationMachine";
 import {
   CharacterCreationEvent,
   CharacterCreationMachineActions,
-} from "./characterCreationMachine";
-import { characterCreationContext } from "./characterCreationMachine";
+} from "@/components/CreateCharWizard/characterCreationMachine/characterCreationMachine.types";
 
 export const useCharacterCreationMachine = () => {
   const xStateActor = characterCreationContext.useActorRef();

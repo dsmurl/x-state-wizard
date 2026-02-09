@@ -1,7 +1,7 @@
 import reactLogo from "../assets/react.svg?url";
 
 import { CreateCharDialog } from "@/components/CreateCharDialog/CreateCharDialog";
-import { DebugContextProvider } from "@/components/DebugPanel/DebugContextProvider";
+import { DebugContextProvider } from "@/components/DebugArea/DebugContextProvider";
 
 const HomeContent = () => {
   return (

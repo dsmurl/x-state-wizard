@@ -1,8 +1,9 @@
 import { ProgressBar } from "@/ui/ProgressBar";
+import { WizardLayout } from "@/components/CreateCharWizard/components/WizardLayout/WizardLayout";
 
-export const CharacterCreation = () => {
+export const ProcessingPanel = () => {
   return (
-    <div>
+    <WizardLayout title="Create Character" hasClose={false}>
       <div className="p-6">
         <p>Creating your character with a crappy api.</p>
         <div>(50/50 success rate)</div>
@@ -11,6 +12,6 @@ export const CharacterCreation = () => {
           <ProgressBar waitTime={2000} />
         </div>
       </div>
-    </div>
+    </WizardLayout>
   );
 };

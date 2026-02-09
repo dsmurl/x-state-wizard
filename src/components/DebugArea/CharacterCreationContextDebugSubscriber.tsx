@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 
-import { characterCreationContext } from "@/machines/characterCreationMachine/characterCreationMachine";
-import { useDebugContext } from "@/components/DebugPanel/DebugContextProvider";
+import { characterCreationContext } from "@/components/CreateCharWizard/characterCreationMachine/characterCreationMachine";
+import { useDebugContext } from "@/components/DebugArea/DebugContextProvider";
 
 // Just for debugging to the DebugPanel
 // This component must be placed inside characterCreationContext.Provider

@@ -1,46 +1,11 @@
 import { assign, fromPromise, setup } from "xstate";
 import { createActorContext } from "@xstate/react";
-import { crappyNetworkClient } from "@/crappyApiClient/crappyNetworkClient";
 
 import {
-  CharacterClass,
-  Item,
-} from "@/machines/characterCreationMachine/characterCreationMachine.types";
-
-export type Character = {
-  name?: string;
-  characterClass?: CharacterClass;
-  item?: Item;
-};
-
-export type CharacterCreationMachineActions = {
-  onClose: () => void;
-  onFlowSuccess: ({ character }: { character: Character }) => void;
-};
-
-type CharacterCreationContext = {
-  values: {
-    character: Character;
-  };
-  actions: CharacterCreationMachineActions;
-};
-
-export type CharacterCreationEvent =
-  | {
-      type: "CONFIG";
-      data: {
-        onClose: () => void;
-        onFlowSuccess: ({ character }: { character: Character }) => void;
-      };
-    }
-  | { type: "SET_NAME"; data: { name: string } }
-  | { type: "SET_CLASS"; data: { characterClass: CharacterClass } }
-  | { type: "SET_ITEM"; data: { item: Item } }
-  | { type: "CONTINUE" }
-  | { type: "CLOSE" }
-  | { type: "GO_BACK" }
-  | { type: "RETRY" }
-  | { type: "RESET" };
+  CharacterCreationContext,
+  CharacterCreationEvent,
+} from "@/components/CreateCharWizard/characterCreationMachine/characterCreationMachine.types";
+import { createCharacterPost } from "@/components/CreateCharWizard/characterCreationMachine/api/createCharacterPost";
 
 export const characterCreationMachine = setup({
   types: {
@@ -49,7 +14,7 @@ export const characterCreationMachine = setup({
   },
   actors: {
     createCharacterActor: fromPromise(async () => {
-      return await crappyNetworkClient.createCharacter();
+      return await createCharacterPost();
     }),
   },
   guards: {

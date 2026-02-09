@@ -1,19 +1,16 @@
 import { FC, useCallback } from "react";
 
-import { ClassSelect } from "@/components/CreateCharWizard/components/ClassSelect/ClassSelect";
-import { ItemSelect } from "@/components/CreateCharWizard/components/ItemSelect/ItemSelect";
-import { NameSelect } from "@/components/CreateCharWizard/components/NameSelect/NameSelect";
-import { WizardLayout } from "@/components/CreateCharWizard/components/WizardLayout/WizardLayout";
-import { CharacterCreation } from "@/components/CreateCharWizard/components/CharacterCreation/CharacterCreation";
-import { CharacterCreationSuccess } from "@/components/CreateCharWizard/components/CharacterCreationSuccess/CharacterCreationSuccess";
-import { CharacterCreationFail } from "@/components/CreateCharWizard/components/CharacterCreationFail/CharacterCreationFail";
-import {
-  Character,
-  characterCreationContext,
-} from "@/machines/characterCreationMachine/characterCreationMachine";
-import { CharacterCreationContextDebugSubscriber } from "@/components/DebugPanel/CharacterCreationContextDebugSubscriber";
-import { useDebugContext } from "@/components/DebugPanel/DebugContextProvider";
-import { useCharacterCreationMachine } from "@/machines/characterCreationMachine/useCharacterCreationMachine";
+import { ClassSelectPanel } from "@/components/CreateCharWizard/panels/ClassSelectPanel/ClassSelectPanel";
+import { ItemSelectPanel } from "@/components/CreateCharWizard/panels/ItemSelectPanel/ItemSelectPanel";
+import { NameSelectPanel } from "@/components/CreateCharWizard/panels/NameSelectPanel/NameSelectPanel";
+
+import { ProcessingPanel } from "@/components/CreateCharWizard/panels/ProcessingPanel/ProcessingPanel";
+import { CharacterCreationSuccessPanel } from "@/components/CreateCharWizard/panels/CharacterCreationSuccessPanel/CharacterCreationSuccessPanel";
+import { CharacterCreationFailPanel } from "@/components/CreateCharWizard/panels/CharacterCreationFailPanel/CharacterCreationFailPanel";
+import { characterCreationContext } from "@/components/CreateCharWizard/characterCreationMachine/characterCreationMachine";
+import { CharacterCreationContextDebugSubscriber } from "@/components/DebugArea/CharacterCreationContextDebugSubscriber";
+import { useCharacterCreationMachine } from "@/components/CreateCharWizard/characterCreationMachine/useCharacterCreationMachine";
+import { Character } from "@/components/CreateCharWizard/characterCreationMachine/characterCreationMachine.types";
 
 type CreateCharWizardProps = {
   setIsOpen: (open: boolean) => void;
@@ -41,46 +38,22 @@ const CreateCharacterWizardPanelRouter: FC<CreateCharWizardProps> = ({
       });
       return null; // No UI to render in this state
     case "NAME_SELECTION": {
-      return (
-        <WizardLayout title="Create Character" hasBack={false} hasClose={true}>
-          <NameSelect />
-        </WizardLayout>
-      );
+      return <NameSelectPanel />;
     }
     case "CLASS_SELECTION": {
-      return (
-        <WizardLayout title="Create Character" hasBack={true} hasClose={true}>
-          <ClassSelect />
-        </WizardLayout>
-      );
+      return <ClassSelectPanel />;
     }
     case "ITEM_SELECTION": {
-      return (
-        <WizardLayout title="Create Character" hasBack={true} hasClose={true}>
-          <ItemSelect />
-        </WizardLayout>
-      );
+      return <ItemSelectPanel />;
     }
     case "CREATING_CHARACTER": {
-      return (
-        <WizardLayout title="Create Character" hasClose={false}>
-          <CharacterCreation />
-        </WizardLayout>
-      );
+      return <ProcessingPanel />;
     }
     case "CREATION_FAIL": {
-      return (
-        <WizardLayout title="Create Character" hasClose={false}>
-          <CharacterCreationFail />
-        </WizardLayout>
-      );
+      return <CharacterCreationFailPanel />;
     }
     case "CREATION_SUCCESS": {
-      return (
-        <WizardLayout title="Create Character" hasClose={false}>
-          <CharacterCreationSuccess />
-        </WizardLayout>
-      );
+      return <CharacterCreationSuccessPanel />;
     }
 
     default:

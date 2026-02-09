@@ -1,9 +1,10 @@
 import { useCallback } from "react";
 
 import { WizardFooter } from "@/components/CreateCharWizard/components/WizardFooter/WizardFooter";
-import { useCharacterCreationMachine } from "@/machines/characterCreationMachine/useCharacterCreationMachine";
+import { useCharacterCreationMachine } from "@/components/CreateCharWizard/characterCreationMachine/useCharacterCreationMachine";
+import { WizardLayout } from "@/components/CreateCharWizard/components/WizardLayout/WizardLayout";
 
-export const CharacterCreationFail = () => {
+export const CharacterCreationFailPanel = () => {
   const { characterCreationMachineSend } = useCharacterCreationMachine();
 
   const handleRetryClicked = useCallback(() => {
@@ -13,7 +14,7 @@ export const CharacterCreationFail = () => {
   }, [characterCreationMachineSend]);
 
   return (
-    <div>
+    <WizardLayout title="Create Character" hasClose={false}>
       <div className="p-6">
         <p>Something went wrong :(</p>
       </div>
@@ -21,6 +22,6 @@ export const CharacterCreationFail = () => {
         handleContinue={handleRetryClicked}
         continueButtonText="Retry"
       />
-    </div>
+    </WizardLayout>
   );
 };

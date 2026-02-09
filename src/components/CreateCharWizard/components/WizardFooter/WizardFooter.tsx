@@ -18,7 +18,6 @@ export const WizardFooter: FC<WizardFooterProps> = ({
     <div className="p-4 flex justify-end bg-white border-t border-t-gray-300">
       <Button
         onClick={handleContinue}
-        aria-label="Close"
         data-testid="wizard-layout-continue-button"
         disabled={isLoading || continueDisabled}
         variant="primary"

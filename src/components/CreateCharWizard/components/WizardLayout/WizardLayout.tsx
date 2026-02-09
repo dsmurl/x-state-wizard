@@ -1,10 +1,9 @@
 import { FC, ReactNode, useCallback } from "react";
 
-import * as Dialog from "@radix-ui/react-dialog";
 import { ChevronLeftIcon, Cross1Icon } from "@radix-ui/react-icons";
 
 import { Button } from "@/ui/Button";
-import { useCharacterCreationMachine } from "@/machines/characterCreationMachine/useCharacterCreationMachine";
+import { useCharacterCreationMachine } from "@/components/CreateCharWizard/characterCreationMachine/useCharacterCreationMachine";
 
 type WizardLayoutProps = {
   title: string;
@@ -47,15 +46,13 @@ export const WizardLayout: FC<WizardLayoutProps> = ({
           <h2 className="text-xl font-medium text-gray-900">{title}</h2>
         </div>
         {hasClose ? (
-          <Dialog.Close asChild>
-            <Button
-              onClick={handleClose}
-              aria-label="Close"
-              data-testid="wizard-layout-close-button"
-            >
-              <Cross1Icon className="h-5 w-5" />
-            </Button>
-          </Dialog.Close>
+          <Button
+            onClick={handleClose}
+            aria-label="Close"
+            data-testid="wizard-layout-close-button"
+          >
+            <Cross1Icon className="h-5 w-5" />
+          </Button>
         ) : null}
       </div>
 

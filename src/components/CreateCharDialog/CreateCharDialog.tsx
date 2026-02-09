@@ -4,7 +4,7 @@ import * as Dialog from "@radix-ui/react-dialog";
 
 import { Button } from "@/ui/Button";
 import { CreateCharacterWizard } from "@/components/CreateCharWizard/CreateCharacterWizard";
-import { DebugPanel } from "@/components/DebugPanel/DebugPanel";
+import { DebugArea } from "@/components/DebugArea/DebugArea";
 
 export const CreateCharDialog = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -28,7 +28,7 @@ export const CreateCharDialog = () => {
         >
           <CreateCharacterWizard setIsOpen={setIsOpen} />
         </Dialog.Content>
-        <DebugPanel />
+        <DebugArea />
       </Dialog.Portal>
     </Dialog.Root>
   );

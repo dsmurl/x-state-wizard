@@ -1,13 +1,14 @@
 import { useCallback } from "react";
 
 import { WizardFooter } from "@/components/CreateCharWizard/components/WizardFooter/WizardFooter";
-import { useCharacterCreationMachine } from "@/machines/characterCreationMachine/useCharacterCreationMachine";
+import { useCharacterCreationMachine } from "@/components/CreateCharWizard/characterCreationMachine/useCharacterCreationMachine";
 import {
   type Item,
   items,
-} from "@/machines/characterCreationMachine/characterCreationMachine.types";
+} from "@/components/CreateCharWizard/characterCreationMachine/characterCreationMachine.types";
+import { WizardLayout } from "@/components/CreateCharWizard/components/WizardLayout/WizardLayout";
 
-export const ItemSelect = () => {
+export const ItemSelectPanel = () => {
   const { characterCreationMachineSend, characterCreationMachineContext } =
     useCharacterCreationMachine();
 
@@ -34,7 +35,7 @@ export const ItemSelect = () => {
   }, [characterCreationMachineSend, item]);
 
   return (
-    <div>
+    <WizardLayout title="Create Character" hasBack={true} hasClose={true}>
       <div className="p-6">
         <p>Please select an item</p>
 
@@ -65,6 +66,6 @@ export const ItemSelect = () => {
         continueButtonText="Continue"
         continueDisabled={!item}
       />
-    </div>
+    </WizardLayout>
   );
 };

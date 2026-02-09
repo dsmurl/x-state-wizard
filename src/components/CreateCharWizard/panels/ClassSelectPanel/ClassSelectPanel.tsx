@@ -1,13 +1,14 @@
 import { useCallback } from "react";
 
 import { WizardFooter } from "@/components/CreateCharWizard/components/WizardFooter/WizardFooter";
-import { useCharacterCreationMachine } from "@/machines/characterCreationMachine/useCharacterCreationMachine";
+import { useCharacterCreationMachine } from "@/components/CreateCharWizard/characterCreationMachine/useCharacterCreationMachine";
 import {
   type CharacterClass,
   characters,
-} from "@/machines/characterCreationMachine/characterCreationMachine.types";
+} from "@/components/CreateCharWizard/characterCreationMachine/characterCreationMachine.types";
+import { WizardLayout } from "@/components/CreateCharWizard/components/WizardLayout/WizardLayout";
 
-export const ClassSelect = () => {
+export const ClassSelectPanel = () => {
   const { characterCreationMachineSend, characterCreationMachineContext } =
     useCharacterCreationMachine();
 
@@ -35,7 +36,7 @@ export const ClassSelect = () => {
   }, [characterClass, characterCreationMachineSend]);
 
   return (
-    <div>
+    <WizardLayout title="Create Character" hasBack={true} hasClose={true}>
       <div className="p-6">
         <p>Please select a class</p>
 
@@ -68,6 +69,6 @@ export const ClassSelect = () => {
         continueButtonText="Continue"
         continueDisabled={!characterClass}
       />
-    </div>
+    </WizardLayout>
   );
 };

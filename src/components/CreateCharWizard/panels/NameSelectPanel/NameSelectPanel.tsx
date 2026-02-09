@@ -2,10 +2,11 @@ import { ChangeEvent, useCallback } from "react";
 
 import * as Form from "@radix-ui/react-form";
 
-import { useCharacterCreationMachine } from "@/machines/characterCreationMachine/useCharacterCreationMachine";
+import { useCharacterCreationMachine } from "@/components/CreateCharWizard/characterCreationMachine/useCharacterCreationMachine";
 import { WizardFooter } from "@/components/CreateCharWizard/components/WizardFooter/WizardFooter";
+import { WizardLayout } from "@/components/CreateCharWizard/components/WizardLayout/WizardLayout";
 
-export const NameSelect = () => {
+export const NameSelectPanel = () => {
   const { characterCreationMachineSend, characterCreationMachineContext } =
     useCharacterCreationMachine();
 
@@ -28,7 +29,7 @@ export const NameSelect = () => {
   }, [characterCreationMachineSend]);
 
   return (
-    <div>
+    <WizardLayout title="Create Character" hasBack={false} hasClose={true}>
       <div className="p-6">
         <p>Choose your character's name</p>
 
@@ -61,6 +62,6 @@ export const NameSelect = () => {
         continueButtonText="Continue"
         continueDisabled={!name?.trim()}
       />
-    </div>
+    </WizardLayout>
   );
 };

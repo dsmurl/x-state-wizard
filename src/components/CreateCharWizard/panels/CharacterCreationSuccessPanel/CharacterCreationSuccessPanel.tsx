@@ -1,9 +1,10 @@
 import { useCallback } from "react";
 
 import { WizardFooter } from "@/components/CreateCharWizard/components/WizardFooter/WizardFooter";
-import { useCharacterCreationMachine } from "@/machines/characterCreationMachine/useCharacterCreationMachine";
+import { useCharacterCreationMachine } from "@/components/CreateCharWizard/characterCreationMachine/useCharacterCreationMachine";
+import { WizardLayout } from "@/components/CreateCharWizard/components/WizardLayout/WizardLayout";
 
-export const CharacterCreationSuccess = () => {
+export const CharacterCreationSuccessPanel = () => {
   const { characterCreationMachineSend, characterCreationMachineContext } =
     useCharacterCreationMachine();
 
@@ -14,7 +15,7 @@ export const CharacterCreationSuccess = () => {
   }, [characterCreationMachineSend]);
 
   return (
-    <div>
+    <WizardLayout title="Create Character" hasClose={false}>
       <div className="p-6">
         <p>Your character has been successfully created!</p>
 
@@ -34,6 +35,6 @@ export const CharacterCreationSuccess = () => {
         handleContinue={handleSubmit}
         continueButtonText="Sally Forth"
       />
-    </div>
+    </WizardLayout>
   );
 };

@@ -1,4 +1,4 @@
-import { useDebugContext } from "@/components/DebugPanel/DebugContextProvider";
+import { useDebugContext } from "@/components/DebugArea/DebugContextProvider";
 
 const getBackgroundColor = (index: number) => {
   if (index === 0) return "bg-green-300"; // Brightest - most recent
@@ -9,7 +9,7 @@ const getBackgroundColor = (index: number) => {
   return "bg-green-50/50"; // Lightest for older messages
 };
 
-export const DebugPanel = () => {
+export const DebugArea = () => {
   const {
     values: { messageList, currentState, currentContext },
   } = useDebugContext();
@@ -18,7 +18,7 @@ export const DebugPanel = () => {
     <div>
       <div
         data-testid="message-list"
-        className="fixed top-0 left-0 z-[9999] w-96 border border-black p-2 rounded bg-blue-100 shadow-lg overflow-y-auto text-[10pt] text-left pointer-events-auto"
+        className="fixed top-2 left-2 z-[9999] w-96 border border-black p-2 rounded bg-blue-100 shadow-lg overflow-y-auto text-[10pt] text-left pointer-events-auto"
       >
         <div>State:</div>
         <div className="pl-2 pb-2">{currentState}</div>
@@ -32,7 +32,7 @@ export const DebugPanel = () => {
 
       <div
         data-testid="message-list"
-        className="fixed top-0 right-0 z-[9999]  w-96 border border-black p-2 rounded bg-blue-100 shadow-lg overflow-y-auto text-[10pt] text-left pointer-events-auto"
+        className="fixed top-2 right-2 z-[9999]  w-96 border border-black p-2 rounded bg-blue-100 shadow-lg overflow-y-auto text-[10pt] text-left pointer-events-auto"
       >
         <div>Messages:</div>
         {[...messageList].reverse().map((message, index) => (
